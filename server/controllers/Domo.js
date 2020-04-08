@@ -2,12 +2,7 @@ const models = require('../models');
 
 const { Domo } = models;
 
-const defaultDomo = {
-  name: 'name',
-  age: 16,
-  owner: null,
-  level: 3,
-}
+const defaultDomo = {};
 
 const makerPage = (req, res) => {
   Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
@@ -24,10 +19,9 @@ const makeDomo = (req, res) => {
     return res.status(400).json({ error: 'RAWR! Both name and age are required' });
   }
   let level = 0;
-  if (!req.body.level){
+  if (!req.body.level) {
     level = 1;
-  }
-  else{
+  } else {
     level = req.body.level;
   }
 
@@ -35,12 +29,15 @@ const makeDomo = (req, res) => {
     name: req.body.name,
     age: req.body.age,
     owner: req.session.account._id,
-    level: level,
+    level,
   };
 
-  const newDomo = new Domo.DomoModel(domoData);
+  defaultDomo.name = domoData.name;
+  defaultDomo.age = domoData.age;
+  defaultDomo.owner = domoData.owner;
+  defaultDomo.level = domoData.level;
 
-  defaultDomo = newDomo;
+  const newDomo = new Domo.DomoModel(domoData);
 
   const domoPromise = newDomo.save();
 
@@ -58,33 +55,33 @@ const makeDomo = (req, res) => {
   return domoPromise;
 };
 
-const getDomos = (request, response) =>{
+const getDomos = (request, response) => {
   const req = request;
   const res = response;
 
   return Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
-    if (err){
+    if (err) {
       console.log(err);
-      return res.status(400).json({error: 'An error occured'});
+      return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({domos: docs});
+    return res.json({ domos: docs });
   });
 };
 
 const levelDomo = (request, response) => {
   const req = request;
   const res = response;
-console.log('hi');
+  console.log('hi');
   return Domo.DomoModel.findByName(req.session.account._id, (err, docs) => {
-    if (err){
+    if (err) {
       console.log(err);
-      return res.status(400).json({error: 'An error occured'});
+      return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({domos: docs});
+    return res.json({ domos: docs });
   });
-}
+};
 
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
