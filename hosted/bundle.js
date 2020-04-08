@@ -41,7 +41,7 @@ var DomoForm = function DomoForm(props) {
     }), /*#__PURE__*/React.createElement("label", {
       htmlFor: "level"
     }, "Level: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoLevel",
+      id: "currentDomoLevel",
       type: "text",
       name: "level",
       placeholder: " Domo Level"
@@ -57,23 +57,20 @@ var DomoForm = function DomoForm(props) {
   );
 };
 
-var handleLevel = function handleLevel(e) {
+var handleDelete = function handleDelete(e) {
   e.preventDefault();
   $("#domoMaker").animate({
     width: 'hide'
-  }, 350); // change what happens depending on the active element
+  }, 350);
 
   if ($("#domoSearchName").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
-  } // (if time) code here to change action to /delete instead of /level
-  // code server side for deleting element from database
-
+  }
 
   sendAjax('POST', $("#domoLevel").attr('action'), $("#domoLevel").serialize(), function () {
     loadDomosFromServer();
-  }); //console.log(document.activeElement.name);
-
+  });
   return false;
 }; // add code for leveling up a Domo (and if time delete)
 
@@ -81,8 +78,8 @@ var handleLevel = function handleLevel(e) {
 var DomoLevel = function DomoLevel(props) {
   return (/*#__PURE__*/React.createElement("form", {
       id: "domoLevel",
-      onSubmit: handleLevel,
-      action: "/level",
+      onSubmit: handleDelete,
+      action: "/delete",
       method: "POST",
       className: "domoLevel"
     }, /*#__PURE__*/React.createElement("label", {
@@ -99,8 +96,7 @@ var DomoLevel = function DomoLevel(props) {
     }), /*#__PURE__*/React.createElement("input", {
       className: "makeDomoSubmit",
       type: "submit",
-      value: "Level Domo",
-      name: "leveler"
+      value: "Delete Domo"
     }))
   );
 };
@@ -129,7 +125,7 @@ var DomoList = function DomoList(props) {
         className: "domoAge"
       }, " Age: ", domo.age), /*#__PURE__*/React.createElement("h3", {
         className: "domoLevel"
-      }, "Level: ", domo.age))
+      }, "Level: ", domo.level))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {

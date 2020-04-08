@@ -28,33 +28,26 @@ const DomoForm = (props) => {
             <label htmlFor = "age">Age: </label>
             <input id="domoAge" type='text' name='age' placeholder='Domo Age'/>
             <label htmlFor="level">Level: </label>
-            <input id="domoLevel" type='text' name='level' placeholder=' Domo Level' />
+            <input id="currentDomoLevel" type='text' name='level' placeholder=' Domo Level' />
             <input type='hidden' name='_csrf' value={props.csrf} />
             <input className='makeDomoSubmit' type='submit' value='Make Domo' />
         </form>
     );
 };
 
-const handleLevel = (e) => {
+const handleDelete = (e) => {
     e.preventDefault();
 
     $("#domoMaker").animate({width:'hide'}, 350);
-
-    // change what happens depending on the active element
 
     if ($("#domoSearchName").val() == ''){
         handleError("RAWR! All fields are required");
         return false;
     }
-    
-    // (if time) code here to change action to /delete instead of /level
-    // code server side for deleting element from database
 
     sendAjax('POST', $("#domoLevel").attr('action'), $("#domoLevel").serialize(), function(){
         loadDomosFromServer();
     });
-
-    //console.log(document.activeElement.name);
 
     return false;
 };
@@ -63,15 +56,15 @@ const handleLevel = (e) => {
 const DomoLevel = (props) => {
     return (
         <form id='domoLevel'
-        onSubmit={handleLevel}
-        action='/level'
+        onSubmit={handleDelete}
+        action='/delete'
         method='POST'
         className="domoLevel">
             <label htmlFor='name'>Name: </label>
             <input id='domoSearchName' type='text' name='name' placeholder='Domo Name' />
             <input type='hidden' name='_csrf' value={props.csrf} />
-            <input className='makeDomoSubmit' type='submit' value='Level Domo' name="leveler" />
-            {/* <input className='makeDomoSubmit' type='submit' value='Delete Domo' name='deleter' /> */}
+            <input className='makeDomoSubmit' type='submit' value='Delete Domo' />
+            {/* <button className='makeDomoSubmit' action='/delete' value='Delete Domo' onclick={this.handleDelete.bind(this)} /> */}
         </form>
     );
 };
@@ -91,7 +84,7 @@ const DomoList = (props) => {
                 <img src='/assets/img/domoface.jpeg' alt="domo face" className='domoFace' />
                 <h3 className='domoName'>Name: {domo.name}</h3>
                 <h3 className='domoAge'> Age: {domo.age}</h3>
-                <h3 className='domoLevel'>Level: {domo.age}</h3>
+                <h3 className='domoLevel'>Level: {domo.level}</h3>
             </div>
         );
     });

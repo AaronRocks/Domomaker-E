@@ -2,14 +2,13 @@ const models = require('../models');
 
 const { Domo } = models;
 
-const defaultDomo = {};
-
 const makerPage = (req, res) => {
   Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
+
     return res.render('app', { csrfToken: req.csrfToken(), domos: docs });
   });
 };
@@ -31,11 +30,6 @@ const makeDomo = (req, res) => {
     owner: req.session.account._id,
     level,
   };
-
-  defaultDomo.name = domoData.name;
-  defaultDomo.age = domoData.age;
-  defaultDomo.owner = domoData.owner;
-  defaultDomo.level = domoData.level;
 
   const newDomo = new Domo.DomoModel(domoData);
 
@@ -69,11 +63,11 @@ const getDomos = (request, response) => {
   });
 };
 
-const levelDomo = (request, response) => {
+const deleteDomo = (request, response) => {
   const req = request;
   const res = response;
-  console.log('hi');
-  return Domo.DomoModel.findByName(req.session.account._id, (err, docs) => {
+
+  return Domo.DomoModel.deleteDomo(req.body.name, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });
@@ -86,4 +80,4 @@ const levelDomo = (request, response) => {
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
 module.exports.make = makeDomo;
-module.exports.level = levelDomo;
+module.exports.delete = deleteDomo;
