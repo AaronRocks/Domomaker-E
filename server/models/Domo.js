@@ -28,6 +28,14 @@ const DomoSchema = new mongoose.Schema({
     ref: 'Account',
   },
 
+  level: {
+    type: Number,
+    min: 1,
+    max: 100,
+    // not required If user lackes it when adding char, will default to level 1
+    // ties in to added thing to page - train button to level up domo
+  },
+
   createdData: {
     type: Date,
     default: Date.now,
@@ -37,6 +45,7 @@ const DomoSchema = new mongoose.Schema({
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   age: doc.age,
+  level: doc.level,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
@@ -44,7 +53,15 @@ DomoSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return DomoModel.find(search).select('name age').exec(callback);
+  return DomoModel.find(search).select('name age level').exec(callback);
+};
+
+DomoSchema.statics.findByName = (ownerId, callback) => {
+  const search = {
+    owner: convertId(ownerId),
+  };
+
+  return DomoModel.find(search).select('name').exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);

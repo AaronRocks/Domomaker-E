@@ -27,13 +27,56 @@ const DomoForm = (props) => {
             <input id='domoName' type='text' name='name' placeholder='Domo Name' />
             <label htmlFor = "age">Age: </label>
             <input id="domoAge" type='text' name='age' placeholder='Domo Age'/>
+            <label htmlFor="level">Level: </label>
+            <input id="domoLevel" type='text' name='level' placeholder=' Domo Level' />
             <input type='hidden' name='_csrf' value={props.csrf} />
             <input className='makeDomoSubmit' type='submit' value='Make Domo' />
         </form>
     );
 };
 
-const DomoList = function(props){
+const handleLevel = (e) => {
+    e.preventDefault();
+
+    $("#domoMaker").animate({width:'hide'}, 350);
+
+    // change what happens depending on the active element
+
+    if ($("#domoSearchName").val() == ''){
+        handleError("RAWR! All fields are required");
+        return false;
+    }
+    
+    // (if time) code here to change action to /delete instead of /level
+    // code server side for deleting element from database
+
+    sendAjax('POST', $("#domoLevel").attr('action'), $("#domoLevel").serialize(), function(){
+        loadDomosFromServer();
+    });
+
+    //console.log(document.activeElement.name);
+
+    return false;
+};
+
+// add code for leveling up a Domo (and if time delete)
+const DomoLevel = (props) => {
+    return (
+        <form id='domoLevel'
+        onSubmit={handleLevel}
+        action='/level'
+        method='POST'
+        className="domoLevel">
+            <label htmlFor='name'>Name: </label>
+            <input id='domoSearchName' type='text' name='name' placeholder='Domo Name' />
+            <input type='hidden' name='_csrf' value={props.csrf} />
+            <input className='makeDomoSubmit' type='submit' value='Level Domo' name="leveler" />
+            {/* <input className='makeDomoSubmit' type='submit' value='Delete Domo' name='deleter' /> */}
+        </form>
+    );
+};
+
+const DomoList = (props) => {
     if(props.domos.length === 0) {
         return (
             <div className='domoList'>
@@ -48,6 +91,7 @@ const DomoList = function(props){
                 <img src='/assets/img/domoface.jpeg' alt="domo face" className='domoFace' />
                 <h3 className='domoName'>Name: {domo.name}</h3>
                 <h3 className='domoAge'> Age: {domo.age}</h3>
+                <h3 className='domoLevel'>Level: {domo.age}</h3>
             </div>
         );
     });
@@ -71,6 +115,10 @@ const loadDomosFromServer = () =>{
 const setup = function(csrf){
     ReactDOM.render(
         <DomoForm csrf={csrf}/>, document.querySelector("#makeDomo")
+    );
+
+    ReactDOM.render(
+        <DomoLevel csrf={csrf}/>, document.querySelector("#levelDomo")
     );
 
     ReactDOM.render(
